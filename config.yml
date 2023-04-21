@@ -1,0 +1,12 @@
+screen:
+  width: 80
+  height: 60
+
+view:
+  tileset:
+      name: "dejavu"
+      columns: 32
+      rows: 8
+
+paths:
+  tileset_dejavu: "assets/dejavu10x10_gs_tc.png"
