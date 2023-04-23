@@ -4,6 +4,8 @@ from pathlib import Path
 
 import yaml
 
+root_dir = os.getenv("ROOT_DIR") or Path(os.getcwd())
+
 
 class Config:
     """Load and validate the configuration file."""
@@ -11,7 +13,7 @@ class Config:
     def __init__(self, config_file_name: str = "config.yml"):
         """Initialize."""
 
-        self.root_dir = Path(os.getcwd())
+        self.root_dir = root_dir
         with open(self.root_dir / config_file_name) as filein:
             self.config = yaml.safe_load(filein)
         # self.player = self.config["player"]

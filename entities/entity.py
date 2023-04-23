@@ -18,3 +18,8 @@ class Entity:
         self.char = char
         self.color = color
         self.name = name
+
+    def move(self, dx: int, dy: int):
+        """Move entity."""
+        self.x += dx
+        self.y += dy
