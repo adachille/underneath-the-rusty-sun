@@ -2,6 +2,8 @@
 import tcod
 
 from config import Config
+from engine.engine import Engine
+from input_handlers.default_game import DefaultGameInputHandler
 
 WIDTH, HEIGHT = 80, 60  # Console width and height in tiles.
 
@@ -18,21 +20,19 @@ def main() -> None:
     )
 
     console = tcod.Console(WIDTH, HEIGHT, order="F")
+    engine = Engine(input_handler=DefaultGameInputHandler(), console=console)
     with tcod.context.new(
         columns=console.width,
         rows=console.height,
         tileset=tileset,
     ) as context:
         while True:  # Main loop, runs until SystemExit is raised.
-            console.clear()
-            console.print(x=0, y=0, string="Hello World!")
-            context.present(console)  # Show the console.
+            engine.render_game()  # Render to console
+            context.present(engine.console)  # Show the console.
 
             for event in tcod.event.wait():
                 context.convert_event(event)  # Sets tile coordinates for mouse events.
-                print(event)  # Print event names and attributes.
-                if isinstance(event, tcod.event.Quit):
-                    raise SystemExit()
+                engine.input_handler.handle_event(event)
 
 
 if __name__ == "__main__":
