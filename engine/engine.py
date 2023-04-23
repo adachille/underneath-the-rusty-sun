@@ -2,6 +2,7 @@
 from tcod import Console
 
 from config import Config
+from map.gamemap import GameMap
 from input_handlers.base import BaseInputHandler
 
 
@@ -13,8 +14,9 @@ class Engine:
         self.config = Config()
         self.input_handler = input_handler
         self.console = console
+        self.gamemap = GameMap(parent=self, width=console.width, height=console.height)
 
     def render_game(self):
         """Render game in current state."""
         self.console.clear()
-        self.console.print(x=0, y=0, string="Hello World!")
+        self.gamemap.render(self.console)
