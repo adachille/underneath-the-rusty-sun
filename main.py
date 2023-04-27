@@ -23,7 +23,7 @@ def main() -> None:
         tcod.tileset.CHARMAP_TCOD,
     )
 
-    console = tcod.Console(WIDTH, HEIGHT, order="F")
+    console = tcod.Console(WIDTH, HEIGHT)
     engine = Engine(
         console=console,
         player=entity_factories.player,

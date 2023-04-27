@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-root_dir = os.getenv("ROOT_DIR") or Path(os.getcwd())
+root_dir = Path(os.getenv("ROOT_DIR")) or Path(os.getcwd())
 
 
 class Config:
