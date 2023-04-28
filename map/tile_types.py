@@ -2,6 +2,8 @@ from typing import Tuple
 
 import numpy as np
 
+from colors import common_colors
+
 # Tile graphics structured type compatible with Console.tiles_rgb.
 graphic_dt = np.dtype(
     [
@@ -34,10 +36,10 @@ def new_tile(
 floor = new_tile(
     walkable=True,
     tile_type="Floor",
-    graphic_dt=(ord(" "), (255, 255, 255), (35, 176, 101)),
+    graphic_dt=(ord(" "), (255, 255, 255), common_colors.caribbean_green),
 )
 wall = new_tile(
     walkable=False,
     tile_type="Wall",
-    graphic_dt=(ord(" "), (255, 255, 255), (25, 125, 72)),
+    graphic_dt=(ord(" "), (255, 255, 255), common_colors.deep_jungle_green),
 )

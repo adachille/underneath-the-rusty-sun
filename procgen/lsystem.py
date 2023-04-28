@@ -22,7 +22,8 @@ class LSystem:
         constants: a list of all constants (terminal states) in alphabet
         axiom: start state
         rules: a dict of rules that dictates how variables can be replaced
-        max_steps: the maximum number of steps
+        max_steps: the maximum number of steps to simulate
+        ms_per_step: number of milliseconds between each update
         """
         self.alphabet = variables + constants
         assert all([var in self.alphabet for var in axiom])
@@ -36,30 +37,30 @@ class LSystem:
         self.max_steps = max_steps
         self.ms_per_step = ms_per_step
         self.steps_executed = 0
-        self.time_of_last_iteration: int = None
+        self.time_of_last_update: int = None
 
     def begin(self) -> None:
-        """Begin Lsystem iterations."""
-        self.time_of_last_iteration = self.get_cur_time_ms()
+        """Begin Lsystem updates."""
+        self.time_of_last_update = self.get_cur_time_ms()
 
-    def check_for_iteration(self) -> Optional[str]:
-        """Check if iteration should be executed, if so, return next step."""
+    def check_for_update(self) -> Optional[str]:
+        """Check if update should be executed, if so, return next step."""
         if self.steps_executed >= self.max_steps:
             return None
 
         cur_time = self.get_cur_time_ms()
-        if self.time_of_last_iteration is None:
-            self.time_of_last_iteration = cur_time
+        if self.time_of_last_update is None:
+            self.time_of_last_update = cur_time
             return None
 
-        if self.time_of_last_iteration + self.ms_per_step <= cur_time:
-            self.time_of_last_iteration = cur_time
-            self.iterate()
+        if self.time_of_last_update + self.ms_per_step <= cur_time:
+            self.time_of_last_update = cur_time
+            self.update()
             return self.cur_state
         return None
 
-    def iterate(self) -> None:
-        """Iterate on state."""
+    def update(self) -> None:
+        """Update on state."""
         self.steps_executed += 1
         self.cur_state = "".join(
             [
@@ -82,5 +83,5 @@ class BinaryFractalTree(LSystem):
         variables = ["0", "1"]
         constants = ["[", "]"]
         axiom = "0"
-        rules = {"1": "11", "0": "1[0][0]"}
+        rules = {"1": "11", "0": "1[0]0"}
         super().__init__(variables, constants, axiom, rules, max_steps, ms_per_step)

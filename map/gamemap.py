@@ -20,13 +20,13 @@ class GameMap:
         tiles = np.full((height, width), fill_value=tile_types.floor)
         tiles[0, :] = tile_types.wall
         tiles[:, 0] = tile_types.wall
-        tiles[height - 1, :] = tile_types.wall
-        tiles[:, width - 1] = tile_types.wall
+        tiles[width - 1, :] = tile_types.wall
+        tiles[:, height - 1] = tile_types.wall
         return tiles
 
     def render(self, console: Console) -> None:
         """Renders the map."""
-        console.rgb[0 : self.height, 0 : self.width] = self.tiles["graphic"]
+        console.rgb[0 : self.width, 0 : self.height] = self.tiles["graphic"]
 
         for entity in self.entities:
             console.print(x=entity.x, y=entity.y, string=entity.char, fg=entity.color)

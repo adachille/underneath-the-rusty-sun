@@ -23,7 +23,7 @@ def main() -> None:
         tcod.tileset.CHARMAP_TCOD,
     )
 
-    console = tcod.Console(WIDTH, HEIGHT)
+    console = tcod.Console(WIDTH, HEIGHT, order="F")
     engine = Engine(
         console=console,
         player=entity_factories.player,
@@ -33,6 +33,7 @@ def main() -> None:
         columns=console.width,
         rows=console.height,
         tileset=tileset,
+        vsync=True,
     ) as context:
         try:
             while True:  # Main loop, runs until SystemExit is raised.
