@@ -1,7 +1,32 @@
 """A class representing an LSystem for fractal generation."""
 import time
+from enum import Enum
+from typing import List, Tuple
 
-from typing import List, Optional
+
+class TileAngle(Enum):
+    """Represents a tile angle."""
+
+    UP = 0
+    UP_LEFT = 1
+    LEFT = 2
+    DOWN_LEFT = 3
+    DOWN = 4
+    DOWN_RIGHT = 5
+    RIGHT = 6
+    UP_RIGHT = 7
+
+
+TILE_ANGLE_TO_D_POS = {
+    TileAngle.UP: (0, -1),
+    TileAngle.UP_LEFT: (-1, -1),
+    TileAngle.LEFT: (-1, 0),
+    TileAngle.DOWN_LEFT: (-1, 1),
+    TileAngle.DOWN: (0, 1),
+    TileAngle.DOWN_RIGHT: (1, 1),
+    TileAngle.RIGHT: (1, 0),
+    TileAngle.UP_RIGHT: (1, -1),
+}
 
 
 class LSystem:
@@ -43,21 +68,21 @@ class LSystem:
         """Begin Lsystem updates."""
         self.time_of_last_update = self.get_cur_time_ms()
 
-    def check_for_update(self) -> Optional[str]:
+    def check_for_update(self) -> bool:
         """Check if update should be executed, if so, return next step."""
         if self.steps_executed >= self.max_steps:
-            return None
+            return False
 
         cur_time = self.get_cur_time_ms()
         if self.time_of_last_update is None:
             self.time_of_last_update = cur_time
-            return None
+            return False
 
         if self.time_of_last_update + self.ms_per_step <= cur_time:
             self.time_of_last_update = cur_time
             self.update()
-            return self.cur_state
-        return None
+            return True
+        return False
 
     def update(self) -> None:
         """Update on state."""
@@ -68,6 +93,12 @@ class LSystem:
                 for char in self.cur_state
             ]
         )
+
+    def as_tiles(
+        self, start_x: int, start_y: int, start_angle: TileAngle
+    ) -> List[Tuple[int, int, TileAngle]]:
+        """Convert lsytem state to tiles"""
+        raise NotImplementedError
 
     @staticmethod
     def get_cur_time_ms() -> int:
@@ -85,3 +116,35 @@ class BinaryFractalTree(LSystem):
         axiom = "0"
         rules = {"1": "11", "0": "1[0]0"}
         super().__init__(variables, constants, axiom, rules, max_steps, ms_per_step)
+
+    def as_tiles(
+        self, start_x: int, start_y: int, start_angle: TileAngle = TileAngle.UP
+    ) -> List[Tuple[int, int, TileAngle]]:
+        """Convert binary fractal tree to tiles."""
+        cur_x, cur_y = start_x, start_y
+        cur_angle = start_angle
+        tiles = []
+        stack = []
+        for char in self.cur_state:
+            if char == "0" or char == "1":
+                dx, dy = TILE_ANGLE_TO_D_POS[cur_angle]
+                cur_x += dx
+                cur_y += dy
+                tiles.append((cur_x, cur_y, cur_angle))
+            elif char == "[":
+                stack.append((cur_x, cur_y, cur_angle))
+                cur_angle = TileAngle((cur_angle.value + 1) % 8)
+                # if cur_angle == TileAngle.UP_RIGHT:
+                #     cur_angle = TileAngle.UP
+                # else:
+                #     cur_angle += 1
+            elif char == "]":
+                cur_x, cur_y, cur_angle = stack.pop()
+                cur_angle = TileAngle((cur_angle.value - 1) % 8)
+                # if cur_angle == TileAngle.UP:
+                #     cur_angle = TileAngle.UP_RIGHT
+                # else:
+                #     cur_angle -= 1
+            else:
+                raise ValueError(f"Unexpected bft value {char}")
+        return tiles
